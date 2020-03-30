@@ -1,0 +1,103 @@
+---
+title: "Proofs"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+Consider data for variable x = $x_1$, $x_2$, . . . , $x_n$. We use x to denote the sample mean of x, and $s_x$ is the sample standard deviation of x.
+
+# Part I
+
+For each of the following three transformations derive (a) the sample mean z, and (b) the sample standard
+deviation $s_z$.
+
+1. Centering
+
+$z_i$ = ($x_i$ − x)
+
+$$
+\def\zbar{\overline{z}}
+\def\sumn{\sum_{i=1}^{n}}
+\def\xbar{\overline{x}}
+
+
+\zbar = \frac{1}{n}\sum(z_i)\\
+= \frac{1}{n}\sum(x_i-\xbar)\\
+= \frac{1}{n}\sum(x_i)-\frac{1}{n}\sum(\xbar)\\
+=\xbar-\xbar\\
+=0\\
+
+S_z^2=\frac{1}{n}\sum(z_i-\zbar)\\
+=\frac{1}{n}\sum(z_i-0)^2\\
+=\frac{1}{n}\sum(z_i)^2\\
+=\frac{1}{n}\sum(x_i-\xbar)^2\\
+=\sigma^2(x)\\
+
+S_z=\sqrt(S_z^2)\\
+=\sqrt(\sigma^2(x))\\
+=\sigma(x)
+$$
+2. Scaling
+$$
+z_i = \frac{x_i}{S_x}\\
+\\
+\zbar=\frac{1}{n}\sum(z_i)\\
+=\frac{1}{n}\sum(\frac{x_i}{S_x})\\
+=\frac{1}{n}\frac{1}{S_x}\sum(x_i)\\
+=\frac{\xbar}{S_x}\\
+
+S_z^2=\frac{1}{n}\sum(z_i-\zbar)^2\\
+=\frac{1}{n}\sum(\frac{x_i}{S_x}-\frac{\xbar}{S_x})^2\\
+=\frac{1}{n}\sum(\frac{x_i^2}{S_x^2}-\frac{2x_i\xbar}{S_x^2}+\frac{\xbar^2}{s_x^2})\\
+=\frac{1}{S_x^2}\frac{1}{n}\sum(x_i^2-2x_i\xbar+\xbar^2)\\
+=\frac{1}{S_x^2}\frac{1}{n}\sum(x_i-\xbar)^2\\
+=\frac{1}{S_x^2}S_x^2\\
+=1\\
+
+S_z=\sqrt(S_z^2)=1
+$$
+3. Centering and scaling (standardizing)
+$$
+z_i = \frac{(x_i − x)}{S_x}
+$$
+$$
+\zbar=\frac{1}{n}\sum(z_i)\\
+=\frac{1}{n}\sum(\frac{x_i-\xbar}{S_x})\\
+=\frac{1}{n}\frac{1}{S_x}\sum(x_i-\xbar)\\
+=\frac{1}{S_x}\frac{1}{n}[\sum(x_i)-\sum(\xbar)]\\
+=\frac{1}{S_x}[\frac{1}{n}\sum(x_i)-\frac{1}{n}\sum(\xbar)]\\
+=\frac{1}{S_x}(\xbar-\xbar)\\
+=\frac{1}{S_x}(0)\\
+=0\\
+
+\S_z^2=\frac{1}{n}\sum(z_i)^2\\
+=\frac{1}{n}\sum(\frac{x_i-\xbar}{S_x})^2\\
+=\frac{1}{S_x}\frac{1}{n}\sum(x_i-\xbar)^2\\
+=\frac{1}{S_x}S_x^2\\
+=1\\
+
+S_z=\sqrt{S_z^2}=1
+$$
+
+# Part II
+4. Consider transformation $z_i$ = $\log(x_i)$. 
+Show that the sample mean $\zbar$ equals the logarithm of the
+geometric sample mean of the original data $x_i$.
+
+Note: The sample mean we use most commonly is the arithmetic mean (x = $\frac{1}{n}\sum(x_i)$. For strictly positive data, especially where there is skew, the geometric mean is a better summary of central trend. It is defined as:
+gm(x) = $(\prod_{i=1}^nx_i)^\frac{1}{n}$
+So, your problem is to show that $\zbar = \log(gm(x))$.
+
+$$
+
+\zbar=\frac{1}{n}\sum(z_i)\\
+=\frac{1}{n}\sum(\log(x_i))\\
+=\frac{1}{n}(\log(x_1)+\log(x_2)+...)\\
+=\log(x_1)^\frac{1}{n}+\log(x_2)^\frac{1}{n}+...\\
+=\log(x_1^\frac{1}{n}*x_2^\frac{1}{n}*x_3^\frac{1}{n}...)\\
+=\log(\prod(x_i)^\frac{1}{n})\\
+=\log(gm(x))
+
+$$
+
