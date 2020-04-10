@@ -1,0 +1,247 @@
+---
+title: "AB Testing"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+s <- 30
+pa <- .5
+n <- 50
+pb <- 0.6
+alpha <- 0.05
+
+```
+
+
+# Part 1: Compare to known click rate
+
+(a) Derive expressions for E[$$\overline{X}$$] and var[$$\overline{X}$$]
+under the null hypothesis in terms of $p_a$. You will need to use
+the properties of expectations and variances described below. Here, I give
+you the derivation for E[$$\overline{X}$$],
+you need to do the same for var[$$\overline{X}$$].
+
+$E(\overline{x}) = p_a$
+$V(\overline{x}) = V(\frac{1}{n}\sum_{i=1}^{n}x_i) = \frac{1}{n^2}V(\sum_{i=1}^{n}x_i)=\frac{1}{n^2}\sum_{i=1}^{n}V(x_i)=\frac{1}{n^2}\sum_{i=1}^{n}p_a(1-p_a)=\frac{p_a(1-p_a)}{n}$
+
+(b) Based on your derivation, compute values for E[$\overline{X}$] and
+var[$\overline{X}$] based on $p_a$ = 0.5 and n = 50. Use R or python to do 
+this.
+
+```{r variance}
+expected <- pa
+variance <- (pa * (1-pa)) / n
+
+cat("Variance: ", variance, "\n")
+cat("Expected Value: ", expected, "\n")
+```
+
+(c) Using the result above, you can now use the CLT by approximating the
+distribution of X as N(E[$$\overline{X}$$],$$\sqrt{var(X)}$$). Based on 
+this approximation, compute P(X > pˆB). Use the R function pnorm, or
+norm.cdf in scipy.stats to compute this.
+
+```{r normal_dist}
+pb <- 0.6
+N <- pnorm(pb, expected, sqrt(variance))
+cat("P(mean(x) > 0.6) =", 1 - N)
+
+```
+(d) Should you reject the null hypothesis pB ≤ pA? Why?
+
+We can only reject the null hypothesis if 
+P($\overline{x} > 0.6$) < $\alpha$. In this case, 
+$\alpha = 0.05$ < P($\overline{x} > 0.6$), so we cannot reject the null
+hypothesis.
+
+(e) What if you had observed the same pˆB = 0.6 but with n = 100
+samples.Should you reject the null hypothesis in this case? Why?
+
+```{r letssee}
+variance_100 <- (pb * (1-pb)) / 100
+
+N <- pnorm(pb, expected, sqrt(variance_100))
+cat("P(mean(x) > 0.6) =", 1 - N)
+```
+
+Yes. If n = 100, P($\overline{x} > 0.6$) < $\alpha$, so we should reject
+the null hypothesis in this scenario.
+
+(f) What is the smallest value pˆB you would reject the null hypothesis
+with n = 100. Use the qnorm function in R or norm.ppf in scipy.stats for
+this. Denote this smallest value as qB.
+
+```{r letsseeagain}
+variance_100 <- (pb * (1-pb)) / 100
+
+
+qb <- qnorm(0.95, expected, sqrt(variance_100))
+cat("smallest value =", qb)
+```
+
+The smallest value we should accept, qb, is 0.580581.
+
+(g) Based on (f ), the smallest detectable improvement for pA = 0.5 with 
+n = 100 is then qB − pA. What is the smallest detectable improvement in your
+experiment (that is, with n = 50)?
+
+```{r imp}
+qb <- qnorm(0.95, expected, sqrt(variance))
+
+improvement <- qb - pa
+cat('Smallest detectable improvement =', improvement)
+
+```
+
+# Part 2: Compare to known click rate
+
+```{r setup2, include=FALSE}
+s <- 30
+pa <- .75
+n <- 50
+pb <- 0.6
+alpha <- 0.05
+
+```
+
+(a) What are the values of E[$\overline{X}$] and var(\overline{X}) under
+the null hypothesis in this case.
+
+```{r new_stats}
+expected <- pa
+variance <- (pa*(1-pa))/n
+
+cat("E(mean(x)) = ", expected, "\n")
+cat("var(mean(X)) = ", variance, "\n")
+```
+
+(b) Based on the CLT approximation, compute $P(\overline{X} > p_B)$ under
+the null hypothesis.
+
+```{r CLT}
+
+approx <- 1 - pnorm(pb, expected, sqrt(variance))
+cat("P(mean(x) > pb) =", approx)
+
+```
+
+(c) Should you reject the null hypothesis pB ≤ 0.75? Why?
+
+No. 0.9928471 is significantly greater than 0.05.
+
+(d) What if you had observed the same pˆB = 0.6 but with n = 100 samples.
+Should you reject the null hypothesis in this case? Why?
+
+```{r CLT_n_100}
+n <- 100
+
+variance <- (pa*(1-pa))/n
+
+approx <- 1 - pnorm(pb, expected, sqrt(variance))
+cat("P(mean(x) > pb) =", approx)
+
+```
+
+No. The odds actually go up.
+
+(e) What is the smallest value $p_B$ you should reject the null hypothesis
+with n = 100. Denote this smallest value as $q_B$.
+
+```{r letsseeagainagain}
+variance_100 <- (pa * (1-pa)) / 100
+
+
+qb <- qnorm(.95, expected, sqrt(variance_100))
+cat("smallest value =", qb)
+```
+
+(f) Based on (e), the smallest detectable improvement for pA = 0.75 with n
+= 100 is then qB − pA. What is the smallest detectable improvement in your
+experiment (n = 50)?
+
+```{r imp2}
+n <- 50
+
+variance <- (pa * (1-pa)) / n
+
+qb <- qnorm(0.95, expected, sqrt(variance))
+
+improvement <- qb - pa
+cat('Smallest detectable improvement = ', improvement)
+
+```
+
+# Part 3
+
+Consider your answers for parts (1g) and (2f). Is the smallest detectable
+improvement in Question (1g) larger or smaller than in Question (2f)?
+Explain why this makes sense mathematically.
+
+The smallest detectable improvement is larger in 1g than in 2f. This makes
+sense because we've decreased the variance in part 2 by raising the 
+threshold ($p_A$). We can't improve as much when there's less variance.
+
+# Part 4: Comparing to estimated click rate pA.
+
+(a) Derive expressions for E[Y] and var(Y) under the null hypothesis in
+terms of pA = pB = p. You will need to use the properties of expectations
+and variances described below. Here, I give you the
+derivation for E[Y], you need to do the same for var(Y).
+
+$E[Y] = 0$
+
+$var[Y] = var[\overline{X_B}-\overline{X_A}] = var[\overline{X_B}] - var[\overline{X_A}] = \frac{p_B(1-p_B)}{n} - \frac{p_A(1-p_A)}{n} = 0$
+
+(b) Based on your derivation, compute values for E[$\overline{X}$] and 
+var[$\overline{X}$] based on pA = 0.5 and n = 50. Use R or python to do
+this.
+
+```{r computey}
+pa <- .5
+n <- 50
+
+na <- 55
+sa <- 35
+nb <- 45
+sb <- 35
+
+estimate_mean <- ((sa + sb) / (nb + na))
+
+cat('mean =', estimate_mean)
+```
+
+(c) Now that you have an estimate of p, compute a value for var(Y).
+
+```{r variance_y}
+
+variance <- (.7) * (1-.7)
+
+cat('variance =', variance)
+```
+
+(d) What is your estimate yˆ of pB − pA based on the data your recorded for this experiment?
+
+```{r y_hat}
+pb <- sb / nb
+pa <- sa / na
+
+p <- pb - pa
+cat('y_hat =', p)
+
+```
+
+(e) Using the CLT approximation, what is P(Y > yˆ)
+
+```{r CLT_P(Y)}
+variance <- p * (1 - p)
+expected <- p
+
+probability = 1 - pnorm(expected, 0, sqrt(variance))
+
+cat("Our fantastic probability is", probability)
+```
+
+(f ) Can you reject the null hypothesis of no improvement in this case?
+Why? Remember, we are using α = 0.05.
+
+No. We cannot reject the null hypothesis becuase our fantastic probability is larger than 0.05.
