@@ -1,6 +1,7 @@
 ---
-title: "AB Testing"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -11,15 +12,16 @@ pb <- 0.6
 alpha <- 0.05
 
 ```
-
+(note: Latex for some reason throws a fit when I use the minus sign, so I 
+switched all minus signs with the words 'minus sign')
 
 # Part 1: Compare to known click rate
 
-(a) Derive expressions for E[$$\overline{X}$$] and var[$$\overline{X}$$]
+(a) Derive expressions for E[$\overline{X}$] and var[$\overline{X}$]
 under the null hypothesis in terms of $p_a$. You will need to use
 the properties of expectations and variances described below. Here, I give
-you the derivation for E[$$\overline{X}$$],
-you need to do the same for var[$$\overline{X}$$].
+you the derivation for E[$\overline{X}$],
+you need to do the same for var[$\overline{X}$].
 
 $E(\overline{x}) = p_a$
 $V(\overline{x}) = V(\frac{1}{n}\sum_{i=1}^{n}x_i) = \frac{1}{n^2}V(\sum_{i=1}^{n}x_i)=\frac{1}{n^2}\sum_{i=1}^{n}V(x_i)=\frac{1}{n^2}\sum_{i=1}^{n}p_a(1-p_a)=\frac{p_a(1-p_a)}{n}$
@@ -37,8 +39,8 @@ cat("Expected Value: ", expected, "\n")
 ```
 
 (c) Using the result above, you can now use the CLT by approximating the
-distribution of X as N(E[$$\overline{X}$$],$$\sqrt{var(X)}$$). Based on 
-this approximation, compute P(X > pˆB). Use the R function pnorm, or
+distribution of X as N(E[$\overline{X}$],$\sqrt{var(X)}$). Based on 
+this approximation, compute P(X > pB). Use the R function pnorm, or
 norm.cdf in scipy.stats to compute this.
 
 ```{r normal_dist}
@@ -47,15 +49,15 @@ N <- pnorm(pb, expected, sqrt(variance))
 cat("P(mean(x) > 0.6) =", 1 - N)
 
 ```
-(d) Should you reject the null hypothesis pB ≤ pA? Why?
+(d) Should you reject the null hypothesis pB $\leq$ pA? Why?
 
 We can only reject the null hypothesis if 
 P($\overline{x} > 0.6$) < $\alpha$. In this case, 
 $\alpha = 0.05$ < P($\overline{x} > 0.6$), so we cannot reject the null
 hypothesis.
 
-(e) What if you had observed the same pˆB = 0.6 but with n = 100
-samples.Should you reject the null hypothesis in this case? Why?
+(e) What if you had observed the same pB = 0.6 but with n = 100
+samples. Should you reject the null hypothesis in this case? Why?
 
 ```{r letssee}
 variance_100 <- (pb * (1-pb)) / 100
@@ -67,7 +69,7 @@ cat("P(mean(x) > 0.6) =", 1 - N)
 Yes. If n = 100, P($\overline{x} > 0.6$) < $\alpha$, so we should reject
 the null hypothesis in this scenario.
 
-(f) What is the smallest value pˆB you would reject the null hypothesis
+(f) What is the smallest value pB you would reject the null hypothesis
 with n = 100. Use the qnorm function in R or norm.ppf in scipy.stats for
 this. Denote this smallest value as qB.
 
@@ -79,11 +81,10 @@ qb <- qnorm(0.95, expected, sqrt(variance_100))
 cat("smallest value =", qb)
 ```
 
-The smallest value we should accept, qb, is 0.580581.
 
-(g) Based on (f ), the smallest detectable improvement for pA = 0.5 with 
-n = 100 is then qB − pA. What is the smallest detectable improvement in your
-experiment (that is, with n = 50)?
+(g) Based on (f), the smallest detectable improvement for pA = 0.5 with 
+n = 100 is then qB (minus sign) pA. What is the smallest detectable
+improvement in your experiment (that is, with n = 50)?
 
 ```{r imp}
 qb <- qnorm(0.95, expected, sqrt(variance))
@@ -104,7 +105,7 @@ alpha <- 0.05
 
 ```
 
-(a) What are the values of E[$\overline{X}$] and var(\overline{X}) under
+(a) What are the values of E[$\overline{X}$] and var($\overline{X}$) under
 the null hypothesis in this case.
 
 ```{r new_stats}
@@ -125,11 +126,11 @@ cat("P(mean(x) > pb) =", approx)
 
 ```
 
-(c) Should you reject the null hypothesis pB ≤ 0.75? Why?
+(c) Should you reject the null hypothesis pB $\leq$ 0.75? Why?
 
 No. 0.9928471 is significantly greater than 0.05.
 
-(d) What if you had observed the same pˆB = 0.6 but with n = 100 samples.
+(d) What if you had observed the same pB = 0.6 but with n = 100 samples.
 Should you reject the null hypothesis in this case? Why?
 
 ```{r CLT_n_100}
@@ -155,9 +156,9 @@ qb <- qnorm(.95, expected, sqrt(variance_100))
 cat("smallest value =", qb)
 ```
 
-(f) Based on (e), the smallest detectable improvement for pA = 0.75 with n
-= 100 is then qB − pA. What is the smallest detectable improvement in your
-experiment (n = 50)?
+(f) Based on (e), the smallest detectable improvement for pA = 0.75 with
+n = 100 is then qB (minus sign) pA. What is the smallest detectable
+improvement inyour experiment (n = 50)?
 
 ```{r imp2}
 n <- 50
@@ -219,7 +220,8 @@ variance <- (.7) * (1-.7)
 cat('variance =', variance)
 ```
 
-(d) What is your estimate yˆ of pB − pA based on the data your recorded for this experiment?
+(d) What is your estimate y of pB (minus sign) pA based on the data your
+recorded for this experiment?
 
 ```{r y_hat}
 pb <- sb / nb
@@ -230,7 +232,7 @@ cat('y_hat =', p)
 
 ```
 
-(e) Using the CLT approximation, what is P(Y > yˆ)
+(e) Using the CLT approximation, what is P(Y > y)
 
 ```{r CLT_P(Y)}
 variance <- p * (1 - p)
@@ -242,6 +244,6 @@ cat("Our fantastic probability is", probability)
 ```
 
 (f ) Can you reject the null hypothesis of no improvement in this case?
-Why? Remember, we are using α = 0.05.
+Why? Remember, we are using $\alpha$ = 0.05.
 
 No. We cannot reject the null hypothesis becuase our fantastic probability is larger than 0.05.
