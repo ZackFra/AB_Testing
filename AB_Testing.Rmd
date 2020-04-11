@@ -77,7 +77,7 @@ this. Denote this smallest value as qB.
 variance_100 <- (pb * (1-pb)) / 100
 
 
-qb <- qnorm(0.95, expected, sqrt(variance_100))
+qb <- qnorm(0.95, pb, sqrt(variance_100))
 cat("smallest value =", qb)
 ```
 
@@ -191,16 +191,14 @@ derivation for E[Y], you need to do the same for var(Y).
 
 $E[Y] = 0$
 
-$var[Y] = var[\overline{X_B}-\overline{X_A}] = var[\overline{X_B}] - var[\overline{X_A}] = \frac{p_B(1-p_B)}{n} - \frac{p_A(1-p_A)}{n} = 0$
+$var[Y] = var[\overline{X_B}-\overline{X_A}] = var[\overline{X_B}] + var[\overline{-X_A}] =  \frac{p_B(1-p_B)}{n} + \frac{p_A(1-p_A)}{n} = \frac{p_B(1-p_B) + p_A(1-p_A)}{n}$
 
 (b) Based on your derivation, compute values for E[$\overline{X}$] and 
 var[$\overline{X}$] based on pA = 0.5 and n = 50. Use R or python to do
 this.
 
 ```{r computey}
-pa <- .5
-n <- 50
-
+n <- 100
 na <- 55
 sa <- 35
 nb <- 45
@@ -215,7 +213,8 @@ cat('mean =', estimate_mean)
 
 ```{r variance_y}
 
-variance <- (.7) * (1-.7)
+variance <- ((estimate_mean*(1-estimate_mean)) +
+               estimate_mean*(1-estimate_mean)) / n
 
 cat('variance =', variance)
 ```
@@ -235,10 +234,7 @@ cat('y_hat =', p)
 (e) Using the CLT approximation, what is P(Y > y)
 
 ```{r CLT_P(Y)}
-variance <- p * (1 - p)
-expected <- p
-
-probability = 1 - pnorm(expected, 0, sqrt(variance))
+probability = 1 - pnorm(p, 0, sqrt(variance))
 
 cat("Our fantastic probability is", probability)
 ```
@@ -246,4 +242,5 @@ cat("Our fantastic probability is", probability)
 (f ) Can you reject the null hypothesis of no improvement in this case?
 Why? Remember, we are using $\alpha$ = 0.05.
 
-No. We cannot reject the null hypothesis becuase our fantastic probability is larger than 0.05.
+Yes. Our fantastic probability is less than 0.05, so we should reject the
+null hypothesis.
